@@ -26,7 +26,7 @@ if [ -d "$VPN_PEERS_DIR" ] && [ -f "$VPN_PEERS_DIR/${PEER_NAME}.conf" ]; then
   echo "Client '$PEER_NAME' already exists"
   exit 1
 fi
-VPN_PUBLIC_IP=$(curl -s https://wtfismyip.com/text)
+VPN_PUBLIC_IP=$(curl -4s https://wtfismyip.com/text)
 VPN_PORT=$(perl -ne'/ListenPort\s*=\s*(\d+)/ && print $1' "$VPN_CONF")
 VPN_PUBKEY=$(perl -ne '/PrivateKey\s*=\s*(.*)/ && print $1' "$VPN_CONF" | wg pubkey)
 VPN_NET=$(perl -ne '/Address\s*=\s*(.*)/ && print $1' "$VPN_CONF")
