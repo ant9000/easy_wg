@@ -3,14 +3,16 @@
 DEFAULT_IFACE=wg0
 DEFAULT_DNS=1.1.1.1
 DEFAULT_ROUTES=0.0.0.0/0
+DEFAULT_VPN_IP=$(curl -4s https://wtfismyip.com/text)
 
 PEER_NAME=$1
 VPN_IFACE=${2:-$DEFAULT_IFACE}
 DNS=${3:-$DEFAULT_DNS}
 PEER_ROUTES=${4:-$DEFAULT_ROUTES}
+VPN_PUBLIC_IP=${5:-$DEFAULT_VPN_IP}
 if [ -z "$PEER_NAME" ]; then
-  echo "Usage: $(basename $0) client-name [iface] [dns] [routes]"
-  echo "Iface, DNS, routes are optional, and default to $DEFAULT_IFACE, $DEFAULT_DNS, $DEFAULT_ROUTES respectively"
+  echo "Usage: $(basename $0) client-name [iface] [dns] [routes] [vpn ip]"
+  echo "Iface, DNS, routes, vpn ip are optional, and default to $DEFAULT_IFACE, $DEFAULT_DNS, $DEFAULT_ROUTES, $DEFAULT_VPN_IP respectively"
   echo ""
   exit 1
 fi
@@ -26,7 +28,6 @@ if [ -d "$VPN_PEERS_DIR" ] && [ -f "$VPN_PEERS_DIR/${PEER_NAME}.conf" ]; then
   echo "Client '$PEER_NAME' already exists"
   exit 1
 fi
-VPN_PUBLIC_IP=$(curl -4s https://wtfismyip.com/text)
 VPN_PORT=$(perl -ne'/ListenPort\s*=\s*(\d+)/ && print $1' "$VPN_CONF")
 VPN_PUBKEY=$(perl -ne '/PrivateKey\s*=\s*(.*)/ && print $1' "$VPN_CONF" | wg pubkey)
 VPN_NET=$(perl -ne '/Address\s*=\s*(.*)/ && print $1' "$VPN_CONF")
